@@ -20,19 +20,16 @@ async function fetchCoordinates(city){
         console.log(townLon);
         
         divCity.innerHTML = town.name; // on récupère le nom de la ville et on l'affiche dans le HTML
-        divGps.innerHTML += ("Coordonnées GPS : " + townLat + ", " + townLon); // on récupère les coordonnées de la ville et on les affiche dans le HTML  
+        divGps.innerHTML = ("Coordonnées GPS : " + townLat + ", " + townLon); // on récupère les coordonnées de la ville et on les affiche dans le HTML  
     };
-    fetchWeather(townLat, townLon).then((data) => {
-        console.log(data);
-
-    });
-    return {townLat, townLon}
+    //fetchWeather(townLat, townLon)
+    return {lat:townLat, lon:townLon}
 };
 
 //Etape 3: Affiche la température courante de la ville
 
 //fonction asynchrone pour récuperer la température de la ville
-// ! problème pour récupérer les coordonnées trouvées grace à fetchCoordinates(city)
+
 async function fetchWeather(townLat, townLon){
     
     const response = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${townLat}&longitude=${townLon}&current=temperature_2m,precipitation,relative_humidity_2m`);
@@ -46,10 +43,10 @@ async function fetchWeather(townLat, townLon){
 
 //gestionnaire d'évenement sur le bouton
 let bouton = document.querySelector("button"); // on récupère le bouton
-bouton.addEventListener("click", (event) => {
+bouton.addEventListener("click", async function() {
     let city = document.getElementById("cityInput").value; //on récupère la valeur tapée dans le champs ville
     console.log(city);
 
-    fetchCoordinates(city);
-    
+    const coords = await fetchCoordinates(city);
+    fetchWeather(coords.lat, coords.lon);
 });
